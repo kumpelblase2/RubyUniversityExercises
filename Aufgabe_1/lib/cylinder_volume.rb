@@ -5,7 +5,7 @@ require "ext_modules_v2"
 require "ext_lists_v2"
 
 # Calcualtes the volume of a cylinder
-# cylinder_volume ::= Nat x Nat ->? Nat :::: (in_heigth, in_length) ::
+# cylinder_volume ::= Float x Float ->? Float :::: (in_heigth, in_length) ::
 # (in_radius >= 0) :: (in_heigth >= 0) ::
 # Test (1, 1) => 2*Math::PI, 
 #
