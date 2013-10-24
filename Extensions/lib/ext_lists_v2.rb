@@ -6,8 +6,8 @@
 # Michael Boehm, 19.01.12
 
 
-require 'set'
-require 'singleton'
+require 'Set'
+require 'Singleton'
 
 
 class Array
