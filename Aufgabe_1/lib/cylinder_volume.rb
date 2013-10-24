@@ -6,7 +6,7 @@ require "ext_lists_v2"
 
 
 # Calcualtes the volume of a cylinder
-# cylinder_volume ::= Float x Float ->? Float :::: (in_heigth, in_length) ::
+# cylinder_volume ::= Float x Float ->? Float :::: (in_radius, in_height) ::
 # (in_radius >= 0) :: (in_heigth >= 0) ::
 # Test (1, 1) ~> 6.2831853, (5, 5) ~> 157.079632
 # ('1', '2') => Err
