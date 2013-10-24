@@ -32,7 +32,10 @@ class ClockTest < Test::Unit::TestCase
 		assert_equal(add_time(120, 120), 240)
 		assert_equal(add_time(0, nil), Time.new().to_i)
 		assert_equal(add_time(0, 120), 120)
+		assert_equal(add_time(-120, 120), 0)
+		assert_equal(add_time(-60, 120), 60)
 		assert_raise(RuntimeError) {add_time(-120)}
 		assert_raise(RuntimeError) {add_time(0, 'a')}
+		assert_raise(RuntimeError) {add_time(10, -1)}
 	end
 end

@@ -7,7 +7,6 @@ require "ext_lists_v2"
 $MINUTE_IN_SECONDS = 60
 $HOUR_IN_MINUTES = 60
 
-
 def add_time(in_to_add, in_current_time = 0, as_array = false)
 	if in_current_time == nil then
 		in_current_time = Time.new().to_i
@@ -20,7 +19,11 @@ def add_time(in_to_add, in_current_time = 0, as_array = false)
 		in_to_add = array_to_sec(in_to_add)
 	end
 	
-	check_pre((in_to_add.nat?))
+	check_pre(((in_to_add.is_a?(Fixnum))))
+	if in_to_add < 0 then
+		check_pre((in_to_add.abs <= in_current_time))
+	end
+	
 	if as_array then
 		secs_to_array(in_current_time + in_to_add)
 	else
