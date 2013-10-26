@@ -8,72 +8,62 @@ require "ext_lists_v2"
 MINUTE_IN_SECONDS = 60
 # Defines how many minutes are an hour
 HOUR_IN_MINUTES = 60
+# Define how many hours are one day
+DAY_IN_HOURS = 24
+# Define how many seconds are one hour
+HOUR_IN_SECONDS = HOUR_IN_MINUTES * MINUTE_IN_SECONDS
+# Define how many seconds are one day
+DAY_IN_SECONDS = DAY_IN_HOURS * HOUR_IN_MINUTES * MINUTE_IN_SECONDS
+# Define all allowed hours
+ALLOWED_HOURS   = 0...DAY_IN_HOURS
+# Define all allowed minutes
+ALLOWED_MINUTES = 0...HOUR_IN_MINUTES
+# Define all allowed seconds
+ALLOWED_SECONDS = 0...MINUTE_IN_SECONDS
 
-# add_time : Adds a specific amount of time to the current or given time and
-#			 returns the resulting time in seconds or as an array.
-# in_to_add : Integer -> The time to add
-# in_current_time : Integer|Array -> The time to add to. If nil, the current time will be used.
-#									 It can also be an array with size 3 and with the format [hours, minutes, seconds].
-# as_array : Boolean -> Whether the resulting time should be printed out as an array or as seconds.
-# Return: Result in seconds or as an array.
-def add_time(in_to_add, in_current_time = 0, as_array = false)
-	if in_current_time == nil then
-		in_current_time = Time.new().to_i
-	elsif in_current_time.is_a?(Array) then
-		in_current_time = array_to_sec(in_current_time)
-	end
-	
-	check_pre((in_current_time.nat?))
-	if in_to_add.is_a?(Array) then
-		in_to_add = array_to_sec(in_to_add)
-	end
-	
-	check_pre(((in_to_add.is_a?(Fixnum))))
-	if in_to_add < 0 then
-		check_pre((in_to_add.abs <= in_current_time))
-	end
-	
-	if as_array then
-		secs_to_array(in_current_time + in_to_add)
-	else
-		in_current_time + in_to_add
-	end
+# Adds two times with the format of an array with size 3 and [hours, minutes, seconds].
+# An operator can be either 1 or -1 representing addition or substraction of the two times.
+# Lastly the format has to be either 12 hours or 24 hours
+# add_time ::= DayTime x DayTime x Operator x Format -> DayTime ::
+# Test ([1, 0, 1], [1, 0, 1]) => [2, 0, 2], ([2, 59, 1], [0, 1, 59]) => [3, 1, 0],
+# ([25, 0, 1], [1, 0, 1]) => Err, ("", [1, 0, 1]) => Err
+def add_time(in_time1, in_time2, operator = 1, format = DAY_IN_HOURS)
+  check_pre(((day_time?(in_time1)) and
+              (day_time?(in_time2)) and
+              (operator?(operator)) and
+              (format?(format))))
+  sec_to_array(add_sec(to_day_sec(in_time1), to_day_sec(in_time2), operator), format)
 end
 
-# print_time : Prints the time out in an array format.
-# in_time : Integer|Array -> The time to print out. If an array is provided, it has to be in the format [hours, minutes, seconds]
-# twelve_hout : Boolean -> Whether the output format should be in twelve hour format or not.
-# Return: nothing
-def print_time(in_time, twelve_hour = false)
-	if not in_time.is_a?(Array) then
-		in_time = secs_to_array(in_time)
-	end
-	
-	puts (twelve_hour ? in_time[0] % 12 : in_time[0]) + ":" + in_time[1] + ":" + in_time[2]
+def day_time?(in_time)
+  if not (in_time.array? and in_time.size == 3) then
+    return false
+  end
+
+  hour, min, sec = in_time
+  ALLOWED_HOURS === hour and ALLOWED_MINUTES === min and ALLOWED_SECONDS === sec
 end
 
-# array_to_sec : Converts an array into its respective presentation as seconds
-#				 It has to be in the format [hours, minutes, seconds]
-# in_time_array : Array -> Array of time
-# Return: Integer
-def array_to_sec(in_time_array)
-	check_pre(((in_time_array.is_a?(Array)) and (in_time_array.size == 3) and (in_time_array.all? {|i| i.nat?})))
-	sec = in_time_array[2]
-	sec += in_time_array[1] * MINUTE_IN_SECONDS
-	sec += (in_time_array[0] * HOUR_IN_MINUTES) * MINUTE_IN_SECONDS
-	return sec
+def operator?(operator)
+  operator == 1 or operator == -1
 end
 
-# secs_to_array : Converts a time in seconds into an array in the format [hours, minutes, seconds]
-# in_time_sec : Integer -> The time in seconds
-# Return: Array
-def secs_to_array(in_time_sec)
-	check_pre((in_time_sec.nat?))
-	time_array = Array.new(3)
-	time_array[2] = in_time_sec % 60
-	remaining = in_time_sec / 60
-	time_array[1] = remaining % 60
-	remaining = remaining / 60
-	time_array[0] = remaining % 24
-	return time_array
+def format?(format)
+  format == 12 or format == 24
+end
+
+def to_day_sec(in_time)
+  hour, min, sec = in_time
+  sec + (min * MINUTE_IN_SECONDS) + (hour * HOUR_IN_SECONDS)
+end
+
+def add_sec(in_seconds1, in_seconds2, operator)
+  added = (in_seconds1 + in_seconds2 * operator) % DAY_IN_SECONDS
+  (added < 0 ? DAY_IN_SECONDS - added : added)
+end
+
+def sec_to_array(in_seconds, format)
+  min, sec   = in_seconds.divmod(MINUTE_IN_SECONDS)
+  hours, min_rest = min.divmod(HOUR_IN_MINUTES)
+  [hours % format, min_rest, sec]
 end
