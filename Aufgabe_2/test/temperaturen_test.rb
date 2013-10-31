@@ -35,4 +35,18 @@ class TemperaturenTest < Test::Unit::TestCase
 		assert_equal(unangenehm?(17), false)
 		assert_equal(unangenehm?(22), false)
 	end
+	
+	def test_equality
+		assert_equal(angenehm?(1), angenehm2?(1))
+		assert_equal(angenehm?(16), angenehm2?(16))
+		assert_equal(angenehm?(25), angenehm2?(25))
+		
+		assert_equal(angenehm?(1), angenehm3?(1))
+		assert_equal(angenehm?(16), angenehm3?(16))
+		assert_equal(angenehm?(25), angenehm3?(25))
+		
+		assert_equal(angenehm?(1), angenehm4?(1))
+		assert_equal(angenehm?(16), angenehm4?(16))
+		assert_equal(angenehm?(25), angenehm4?(25))
+	end
 end

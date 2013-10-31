@@ -26,5 +26,18 @@ end
 
 def unangenehm?(in_temp)
 	check_pre((in_temp.int?))
-	!angenehm?(in_temp)
+	!(ANGENEHM_RANGE === in_temp)
+end
+
+def angenehm2?(in_temp)
+	!unangenehm?(in_temp)
+end
+
+def angenehm3?(in_temp)
+	!zu_warm?(in_temp) and !zu_kalt?(in_temp)
+end
+
+def angenehm4?(in_temp)
+	check_pre((in_temp.int?))
+	in_temp >= ANGENEHM_LOWER and in_temp <= ANGENEHM_UPPER
 end
