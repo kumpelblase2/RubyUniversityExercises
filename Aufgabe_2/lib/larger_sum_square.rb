@@ -5,6 +5,11 @@ require "ext_modules_v2"
 require "ext_lists_v2"
 require "min_max"
 
+# Calculates the sum of the biggest two square numbers
+# larger_sum_square ::= Int x Int x Int -> Nat ::
+# Test (1, 2, 3) => 13, (3, 2, 1) => 13, (3, 2, 3) => 18,
+# (-1, 2, -3) => 5, (-1, -2, -3) => 5,
+# (1.0, 1, 2) => Err, ('1', 2, 3) => Err
 def larger_sum_square(in_val1, in_val2, in_val3)
 	check_pre(((in_val1.int?) and (in_val2.int?) and (in_val3.int?)))
 	first, second = get_largest_two(in_val1, in_val2, in_val3)

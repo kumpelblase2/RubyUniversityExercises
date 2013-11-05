@@ -15,7 +15,7 @@ class LargerSumSquareTest < Test::Unit::TestCase
 		assert_raise(RuntimeError) { square_sum(1.0, 1) }
 	end
 	
-	def test_get_largest_tow
+	def test_get_largest_two
 		assert_equal(get_largest_two(1, 2, 3), [2, 3])
 		assert_equal(get_largest_two(1, 2, 90), [2, 90])
 		assert_equal(get_largest_two(3, 2, 3), [3, 3])
@@ -27,10 +27,12 @@ class LargerSumSquareTest < Test::Unit::TestCase
 	end
 	
 	def test_larger_sum_square
-		assert_equal(larger_sum_square(1, 2, 3), square_sum(2, 3))
-		assert_equal(larger_sum_square(3, 2, 1), square_sum(2, 3))
-		assert_equal(larger_sum_square(3, 2, 3), square_sum(3, 3))
-		assert_equal(larger_sum_square(-1, 2, -3), square_sum(-1, 2))
-		assert_equal(larger_sum_square(-1, -2, -3), square_sum(-2, -1))
+		assert_equal(larger_sum_square(1, 2, 3), 13)
+		assert_equal(larger_sum_square(3, 2, 1), 13)
+		assert_equal(larger_sum_square(3, 2, 3), 18)
+		assert_equal(larger_sum_square(-1, 2, -3), 5)
+		assert_equal(larger_sum_square(-1, -2, -3), 5)
+		assert_raise(RuntimeError) { larger_sum_square(1.0, 1, 1) }
+		assert_raise(RuntimeError) { larger_sum_square('1', 1, 1) }
 	end
 end
