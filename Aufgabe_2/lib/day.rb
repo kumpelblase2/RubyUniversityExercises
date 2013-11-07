@@ -4,20 +4,22 @@ require "ext_elems_v2"
 require "ext_modules_v2"
 require "ext_lists_v2"
 
-DayNum = 1..7
+WEEK_START = 1
+WEEK_END = 7
+DayNum = WEEK_START..WEEK_END
 DaySym = [ :Mo, :Di, :Mi, :Do, :Fr, :Sa, :So ]
-Day = (DayNum | DaySym)
+Day = (DayNum.to_a | DaySym)
 
 def day_num?(in_number)
   DayNum === in_number
 end
 
 def day_sym?(in_symbol)
-  DaySym === in_symbol
+  DaySym.include?(in_symbol)
 end
 
 def day?(in_day)
-  Day === in_day
+  Day.include?(in_day)
 end
 
 def day_num_to_day_sym(in_number)
@@ -26,8 +28,8 @@ def day_num_to_day_sym(in_number)
 end
 
 def day_sym_to_day_num(in_symbol)
-  check_pre((day_num?(in_symbol)))
-  DaySym.index(in_symbol)
+  check_pre((day_sym?(in_symbol)))
+  DaySym.index(in_symbol) + 1
 end
 
 def to_day_sym(in_day)
@@ -40,7 +42,7 @@ end
 
 def day_num_succ(in_number)
   check_pre((day_num?(in_number)))
-  (day_num?(in_number.succ) ? in_number.succ : 1)
+  (day_num?(in_number.succ) ? in_number.succ : WEEK_START)
 end
 
 def day_sym_succ(in_sym)
@@ -50,7 +52,7 @@ end
 
 def day_num_pred(in_number)
   check_pre((day_num?(in_number)))
-  (day_num?(in_number.pred) ? in_number.pred : 7)
+  (day_num?(in_number.pred) ? in_number.pred : WEEK_END)
 end
 
 def day_sym_pred(in_sym)
