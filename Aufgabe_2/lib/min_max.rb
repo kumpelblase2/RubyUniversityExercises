@@ -17,6 +17,7 @@ end
 # max_int ::= Int x Int -> Int ::
 # Test (1, 2) => 2, (3, 2) => 3, (-1, 2) => 2,
 # (1.0, 1) => Err, ('1', 2) => Err
+
 def max_int(in_first, in_second)
 	check_pre(((in_first.int?) and (in_second.int?)))
 	(in_first > in_second ? in_first : in_second)
@@ -26,7 +27,8 @@ end
 # within? ::= Int x Int x Int -> Bool ::
 # Test (1, 0, 3) => true, (3, 2, 4) => true, (-1, 0, 1) => false,
 # (1.0, 1, 2) => Err, ('1', 0, 2) => Err
+
 def within?(in_val, in_lower, in_upper)
-	check_pre(((in_val.int?) and (in_lower.int?) and (in_upper.int?) and (in_lower < in_upper)))
-	Range.new(in_lower, in_upper) === in_val
+	check_pre(((in_val.int?) and (in_lower.int?) and (in_upper.int?)))
+	(in_lower..in_upper) === in_val
 end
