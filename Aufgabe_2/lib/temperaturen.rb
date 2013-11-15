@@ -29,25 +29,31 @@ end
 # Int -> Bool
 def angenehm?(in_temp)
 	check_pre((in_temp.int?))
-	ANGENEHM_RANGE === in_temp
+#	ANGENEHM_RANGE === in_temp
+  in_temp.in?(ANGENEHM_RANGE)
 end
 
 # Checks if the temperature is either too cold or too warm
 # Int -> Bool
 def unangenehm?(in_temp)
 	check_pre((in_temp.int?))
-	!angenehm?(in_temp)
+	not angenehm?(in_temp)
 end
 
 def angenehm2?(in_temp)
-	!unangenehm?(in_temp)
+	not unangenehm?(in_temp)
 end
 
 def angenehm3?(in_temp)
-	!zu_warm?(in_temp) and !zu_kalt?(in_temp)
+	not zu_warm?(in_temp) and not zu_kalt?(in_temp)
 end
 
 def angenehm4?(in_temp)
 	check_pre((in_temp.int?))
-	in_temp >= ANGENEHM_LOWER and in_temp <= ANGENEHM_UPPER
+	not (zu_warm?(in_temp) or zu_kalt?(in_temp))
+end
+
+def angenehmK?(in_temp)
+	check_pre((in_temp.int?))
+	((zu_warm?(in_temp) ? true : zu_kalt?(in_temp)) ? false : true)
 end
