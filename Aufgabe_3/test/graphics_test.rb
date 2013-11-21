@@ -36,4 +36,10 @@ class GraphicsTest < Test::Unit::TestCase
 		assert_equal(bounds(Range2d[Range1d[1, 2], Range1d[1, 2]]), Range2d[Range1d[1,2], Range1d[1,2]])
 		assert_equal(bounds(Union2d[Range2d[Range1d[1,2], Range1d[1,2]], Range2d[Range1d[2,3], Range1d[2,3]]]), Range2d[Range1d[1,3], Range1d[1,3]])
 	end
+	
+	def test_equal_dim
+		assert_equal(true, equal_by_dim?(Range1d[1,2], Range1d[4, 3]))
+		assert_equal(true, equal_by_dim?(Union1d[Range1d[1,2], Range1d[2,3]], Range1d[1,2]))
+		assert_equal(false, equal_by_dim?(Range1d[1,2], Range2d[Range1d[1,2], Range1d[2,3]]))
+	end
 end

@@ -178,7 +178,7 @@ def bounding_range(in_range, in_range2)
 end
 
 def equal_by_dim?(in_obj, in_obj2)
-	get_dim(in_obj) == in_obj2
+	get_dim(in_obj) == get_dim(in_obj2)
 end
 
 def get_dim(in_obj)
@@ -216,4 +216,8 @@ def get_trans_num(in_range1, in_range2)
 	bigger = biggest(first, second)
 	smaller = smallest(first, second)
 	(bigger % smaller == 0 ? bigger : nil)
+end
+
+def equal_by_points?(in_obj1, in_obj2)
+
 end
