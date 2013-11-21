@@ -55,4 +55,18 @@ class DayTest < Test::Unit::TestCase
 		assert_equal(day_pred(:Fr), :Do)
 		assert_equal(day_pred(:So), :Sa)
 	end
+
+  def test_day_succ_fail
+    assert_raise(RuntimeError) { day_succ(8) }
+    assert_raise(RuntimeError) { day_succ(0) }
+    assert_raise(RuntimeError) { day_succ(:Ma) }
+    assert_raise(RuntimeError) { day_succ(:Si) }
+  end
+
+  def test_day_pred_fail
+    assert_raise(RuntimeError) { day_pred(8) }
+    assert_raise(RuntimeError) { day_pred(0) }
+    assert_raise(RuntimeError) { day_pred(:Ma) }
+    assert_raise(RuntimeError) { day_pred(:Si) }
+  end
 end

@@ -8,11 +8,12 @@ require 'larger_sum_square'
 
 class LargerSumSquareTest < Test::Unit::TestCase
 	def test_square_sum
-		assert_equal(square_sum(1, 1), 2)
-		assert_equal(square_sum(2, 1), 5)
-		assert_equal(square_sum(-1, 2), 5)
-		assert_raise(RuntimeError) { square_sum('1', 1) }
-		assert_raise(RuntimeError) { square_sum(1.0, 1) }
+		assert_equal(square_sum([1, 1]), 2)
+		assert_equal(square_sum([2, 1]), 5)
+		assert_equal(square_sum([-1, 2]), 5)
+    assert_equal(square_sum([3, 4]), 25)
+		assert_raise(RuntimeError) { square_sum(['1', 1]) }
+		assert_raise(RuntimeError) { square_sum([1.0, 1]) }
 	end
 	
 	def test_get_largest_two
@@ -21,7 +22,7 @@ class LargerSumSquareTest < Test::Unit::TestCase
 		assert_equal(get_largest_two(3, 2, 3), [3, 3])
 		assert_equal(get_largest_two(-5, -1, 3), [-1, 3])
 		assert_equal(get_largest_two(-1, -1, -1), [-1, -1])
-		assert_equal(get_largest_two(-1, 2, -1), [2, -1])
+		assert_equal(get_largest_two(-1, 2, -1), [-1, 2])
 		assert_raise(RuntimeError) { get_largest_two('1', 1, 1) }
 		assert_raise(RuntimeError) { get_largest_two(1.0, 1, 1) }
 	end
