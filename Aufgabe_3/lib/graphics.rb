@@ -2,7 +2,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__),'../..','Extensions/lib')
 require "ext_checks_v1"
 require "ext_elems_v2"
 require "ext_modules_v2"
-require "ext_lists_v2"
+#require "ext_lists_v2"
 
 def point1d?(in_point)
 	in_point.int?
@@ -14,7 +14,7 @@ def_class(:Range1d, [:first, :last]){
 	end
 }
 
-def_class(:Union1d, [:first, :last]){
+def_class(:Union1d, [:left, :right]){
 	def invariant?()
 		shape1d?(self.left) and shape1d?(self.right)
 	end
@@ -26,7 +26,7 @@ end
 
 def_class(:Point2d, [:x, :y]){
 	def invariant?()
-		point1d(self.x) and point1d?(self.y)
+		point1d?(self.x) and point1d?(self.y)
 	end
 }
 
@@ -38,7 +38,7 @@ def_class(:Range2d, [:x_range, :y_range]){
 
 def_class(:Union2d, [:left, :right]){
 	def invariant?()
-		shape2d(self.left) and shape2d?(self.right)
+		shape2d?(self.left) and shape2d?(self.right)
 	end
 }
 
@@ -105,8 +105,8 @@ def point1d_include?(in_point1, in_point2)
 end
 
 def range1d_include?(in_range, in_point)
-	#(in_range.first..in_range.last).include?(in_point.point)
-	in_point.point.in?(in_range.first..in_range.last)
+	(in_range.first..in_range.last).include?(in_point)
+	#in_point.in?(in_range.first..in_range.last)
 end
 
 def point2d_include?(in_point1, in_point2)
@@ -118,7 +118,7 @@ def range2d_include?(in_range, in_point)
 end
 
 def translate(in_shape, in_point)
-	check_pre(((shape?(in_shape)) and (point?(in_point))))
+	check_pre(((shape?(in_shape)) or (point?(in_point))))
 	(shape1d?(in_shape) ? translate1d(in_shape, in_point) : translate2d(in_shape, in_point))
 end
 
@@ -132,12 +132,12 @@ def translate_range1d(in_range, in_point)
 end
 
 def translate_point(in_point, in_point_trans)
-	Point1d[in_point + in_point_trans]
+	in_point + in_point_trans
 end
 
 def translate2d(in_shape, in_point)
 	check_pre(((shape2d?(in_shape)) and (in_point.point2d?)))
-	(union_shape?(in_shape) ? Union2d[translate2d(in_shape.left, in_point), translate2d(in_shape.right, in_point)] : translate_shape2d(in_shape, in_point))
+	(union_shape?(in_shape) ? Union2d[translate2d(in_shape.left, in_point), translate2d(in_shape.right, in_point)] : translate_range2d(in_shape, in_point))
 end
 
 def translate_range2d(in_range, in_point)
@@ -154,7 +154,7 @@ def bounds1d(in_shape)
 end
 
 def combine_range(in_range1, in_range2)
-	smallest(in_range1.begin, in_range2.begin)..biggest(in_range1.end, in_range2.end)
+	Range1d[smallest(in_range1.first, in_range2.first),biggest(in_range1.last, in_range2.last)]
 end
 
 def biggest(in_first, in_second)
@@ -198,19 +198,8 @@ def equal(in_obj1, in_obj2)
 end
 
 def equal_by_trans?(in_obj1, in_obj2)
-	equal_by_tree?(in_obj1, in_obj2) and get_trans(in_obj1, in_obj2) != nil
-end
-
-def get_trans(in_obj1, in_obj2)
-	(shape1d?(in_obj1) ? get_trans1d(in_obj1, in_obj2) : get_trans2d(in_obj1, in_obj2))
-end
-
-def get_trans1d(in_obj1, in_obj2)
-	
-end
-
-def get_trans2d(in_obj1, in_obj2)
-	
+	check_pre((equal_by_tree?(in_obj1, in_obj2)))
+	(union_shape?(in_obj1) ? (equal_by_trans?(in_obj1.left, in_obj2.left) and equal_by_trans?(in_obj1.right, in_obj2.right)) : are_multiple?(in_obj1, in_obj2))
 end
 
 def are_multiple?(in_range1, in_range2)
@@ -224,5 +213,7 @@ end
 def get_trans_num(in_range1, in_range2)
 	first = in_range1.first / in_range2.first
 	second = in_range1.last / in_range2.last
-	(first == second ? first : nil)
+	bigger = biggest(first, second)
+	smaller = smallest(first, second)
+	(bigger % smaller == 0 ? bigger : nil)
 end
