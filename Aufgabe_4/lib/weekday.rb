@@ -16,39 +16,76 @@ DAYNUM = WEEK_START..WEEK_END
 # Definition for all valid day symbols
 DAYSYM = [ :Mo, :Di, :Mi, :Do, :Fr, :Sa, :So ]
 
-def_class(:DaySym, [:sym]){
-  def invariant?() DAYSYM.include?(self.sym) end
-}
-
-def_class(:DayNum, [:num]){
-  def invariant?() self.num.in?(DAYNUM) end
-}
-
 class Object
   def day?() false end
+  def day_sym?() false end
+  def day_num?() false end
+end
+
+def Day
+  def self.[](*args) check_inv(self.new(*args)) end
+  def day?() true end
+  def to_representation(in_representation) (in_representation.day_num? ? self.to_day_num() : self.to_day_sym()) end
 end
 
 class DaySym
-  def day?() true end
-  def to_num() to_external(DAYSYM.index(self.to_sym())) end
-  def to_sym() self.sym end
-  def to_day_num() DayNum[self.to_num()] end
+  def initialize(in_sym) @sym = in_sym end
+  def invariant?() DAYSYM.include?(self.sym) end
+  
+  def day_sym?() true end
+  def sym() @sym end
+  def to_day_num() DayNum[to_external(DAYSYM.index(self.sym))] end
   def to_day_sym() self end
-  def succ() to_day_num().succ().to_day_sym() end
-  def pred() to_day_num().pred().to_day_sym() end
-  def to_representation(in_representation) (in_representation.day_num? ? self.to_day_num() : self) end
+  def succ() self.shift(1) end
+  def pred() self.shift(-1) end
+  def shift(in_shift) self.to_day_num().shift(in_shift).to_day_sym() end
+  
+    
+  def ==(in_obj)
+    in_obj.day_sym? and in_obj.sym == self.sym
+  end
+  
+  def +(in_shift)
+    self.shift(in_shift)
+  end
+  
+  def -(in_shift)
+    check_pre((in_shift.int?))
+    self.shift(-in_shift)
+  end
+  
+  def to_s() "DaySym[#{self.sym}]" end
 end
 
 class DayNum
-  def day?() true end
-  def to_num() self.num end
-  def to_sym() DAYSYM[to_internal(self.to_num())] end
+  def initialize(in_num) @num = in_num end
+  def invariant?() self.num.in?(DAYNUM) end
+  
+  def day_num?() true end
+  def num() @num end
   def to_day_num() self end
-  def to_day_sym() DaySym[self.to_sym()] end
+  def to_day_sym() DaySym[DAYSY[to_internal(self.num())]] end
   def succ() self.shift(1) end
   def pred() self.shift(-1) end
-  def shift(in_shift) DayNum[to_external((to_internal(self.to_num()) + in_shift) % WEEK_END)] end
-  def to_representation(in_representation) (in_representation.day_sym? ? self.to_day_sym() : self) end
+  def shift(in_shift)
+    check_pre((in_shift.int?))
+    DayNum[to_external((to_internal(self.to_num()) + in_shift) % WEEK_END)]
+  end
+
+  def ==(in_obj)
+    in_obj.day_num? and in_obj.num == self.num
+  end
+  
+  def +(in_shift)
+    self.shift(in_shift)
+  end
+  
+  def -(in_shift)
+    check_pre((in_shift.int?))
+    self.shift(-in_shift)
+  end
+  
+  def to_s() "DayNum[#{self.num}]" end
 end
 
 # Checks if the given input is representing a valid day, either number or symbol
@@ -157,15 +194,15 @@ end
 # Day x Day -> Day :: (representation x day)
 # Tests (1, DayNum[4]) => 4, (:Mo, DayNum[2]) => :Di, (:We, DayNum[2]) => Err
 # (DayNum[1], :Mo) => DayNum[1], (DaySym[:Mo], DayNum[3]) => :Mi
-def to_day(in_representation, in_day)
-  check_pre(((day?(in_day)) and (day?(in_representation))))
-
-  if (in_representation.day_sym?) then
-      to_day_sym(in_day)
-  else
-    to_day_num(in_day)
-  end
-end
+#def to_day(in_representation, in_day)
+#  check_pre(((day?(in_day)) and (day?(in_representation))))
+#
+#  if (in_representation.day_sym?) then
+#      to_day_sym(in_day)
+#  else
+#    to_day_num(in_day)
+#  end
+#end
 
 # Shifts the day by a given amount
 # Day x Int -> Day

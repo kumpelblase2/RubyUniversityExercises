@@ -7,43 +7,84 @@ require "ext_lists_v2"
 class Object
 	def shape1d?() false end
 	def shape2d?() false end
-	def shape?() self.comp_shape?() or self.prim_shape?() end
-	def point?() self.point1d?() or self.point2d?() end
+	def shape?() false end
+  def point?() false end
 	def prim_shape?() false end
-	def union_shape?()  end
-	def comp_shape?() self.union_shape?() end
-	def graph_obj?() self.shape?() or self.point?() end
+	def union_shape?() false end
+	def comp_shape?() false end
+	def graph_obj?() false end
 end
 
-class Integer
-	def point1d?() true end
-	
-	def same_dim?(in_obj)
+class GraphObj
+  def graph_obj?() true end
+  
+  def self.[](*in_args) check_inv(self.new(*in_args)) end
+end
+
+class Point < GraphObj
+  def point?() true end
+end
+
+class Shape < GraphObj
+  def shape?() true end
+end
+
+class Shape1d < Shape
+  def shape1d?() true end
+
+  def same_dim?(in_obj)
 		in_obj.shape1d? or in_obj.point1d?
 	end
-	
-	def translate(in_point)
-		self + in_point
-	end
-	
-	def same_tree?(in_obj)
-		in_obj.point1d? and in_obj == self
-	end
-	
-	def get_translation_to(in_obj)
-		(in_obj.point1d? ? in_obj - self : nil)
+end
+
+class Shape2d < Shape
+  def shape2d?() true end
+
+  def same_dim?(in_obj)
+		in_obj.shape2d? or in_obj.point2d?
 	end
 end
 
-def_class(:Range1d, [:first, :last]){
-	def invariant?()
-		point1d?(self.first) and point1d?(self.last)
-	end
-}
+class Point1d < Point
+  def point1d?() true end
+  
+  def initialize(in_num) @num = in_num end
+  def invariant?() self.num().int? end
+  
+  def num() @num end
 
-class Range1d
-	def shape1d?() true end
-	def prim_shape?() true end
+  def same_dim?(in_obj)
+		in_obj.shape1d? or in_obj.point1d?
+	end
+
+	def translate(in_point)
+    check_pre((in_point.point1d?))
+		Point1d[self.num + in_point.num]
+	end
+
+	def same_tree?(in_obj)
+		in_obj.point1d? and in_obj.num == self.num
+	end
+
+	def get_translation_to(in_obj)
+		(in_obj.point1d? ? in_obj.num - self.num : nil)
+	end
+end
+
+class Range1d < Shape1d
+  def range1d?() true end
+  def prim_shape?() true end
+
+  def initialize(in_first, in_last)
+    @first = in_first
+    @last = in_last
+  end
+  def invariant?()
+    self.first().point1d? and self.last().point1d?
+  end
+
+  def first() @first end
+  def last() @last end
 	
 	def include?(in_point)
 		check_pre((in_point.point1d?))
@@ -60,11 +101,11 @@ class Range1d
 	end
 	
 	def bounds()
-		
+		self
 	end
 	
 	def bounding_range()
-		
+		self
 	end
 	
 	def same_tree?(in_obj)
@@ -79,16 +120,19 @@ class Range1d
 	end
 end
 
-def_class(:Union1d, [:left, :right]){
-	def invariant?()
-		shape1d?(self.left) and shape1d?(self.right)
-	end
-}
-
-class Union1d
-	def shape1d?() true end
+class Union1d < Shape1d
 	def union_shape?() true end
+  def union1d?() true end
+
+  def initialize(in_left, in_right)
+    @left = in_left
+    @right = in_right
+  end
+  def invariant?() self.left().shape1d? and self.right().shape1d? end
 	
+  def left() @left end
+  def right() @right end
+
 	def include?(in_point)
 		self.left.include?(in_point) or self.right.include?(in_point)
 	end
@@ -96,10 +140,6 @@ class Union1d
 	def translate(in_point)
 		check_pre((self.same_dim?(in_point)))
 		Union1d[self.left.translate(in_point), self.right.translate(in_point)]
-	end
-	
-	def same_dim?(in_obj)
-		in_obj.shape1d? or in_obj.point1d?
 	end
 	
 	def same_tree?(in_obj)
