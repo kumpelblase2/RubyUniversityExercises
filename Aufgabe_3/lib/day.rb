@@ -53,7 +53,10 @@ end
 # Tests (:Mo) => :Mo, (1) => :Mo, (7) => :So, (:So) => :So
 # (DaySym[:Mo]) => DaySym[:Mo], (DayNum[1]) => DaySyn[:Mo]
 def to_day_sym(in_day)
-  (in_day.day_sym? ? in_day : day_num_to_day_sym(in_day))
+  if    in_day.day_sym? then in_day
+  elsif in_day.day_num? then day_num_to_day_sym(in_day)
+  else  check_pre false
+  end
 end
 
 # Converts the given day input into the corresponding day number
@@ -61,7 +64,10 @@ end
 # Tests (:Mo) => 1, (1) => 1, (:So) => 7, (0) => Err, (:We) => Err
 # (DaySym[:Mo]) => DaySym[1], (DayNum[1]) => DayNum[1]
 def to_day_num(in_day)
-  (in_day.day_num? ? in_day : day_sym_to_day_num(in_day))
+  if    in_day.day_num? then in_day
+  elsif in_day.day_sym? then day_sym_to_day_num(in_day)
+  else  check_pre false
+  end
 end
 
 # Gives the successor of the given day number
@@ -106,7 +112,10 @@ end
 # Tests (1) => 2, (:Mo) => :Di, (0) => Err, (:We) => Err
 # (DaySym[:Mo]) => DaySym[:Di], (DayNum[1]) => DayNum[2]
 def day_succ(in_day)
-    in_day.day_sym? ? day_sym_succ(in_day) : day_num_succ(in_day)
+  if in_day.day_sym? then day_sym_succ(in_day)
+  elsif in_day.day_num? then day_num_succ(in_day)
+  else check_pre(false)
+  end
 end
 
 # Gives the predecessor of the given day
@@ -115,7 +124,10 @@ end
 # Tests (1) => 7, (:Mo) => :So, (0) => Err, (:We) => Err
 # (DaySym[:Mo]) => DaySym[:So], (DayNum[1]) => DayNum[7]
 def day_pred(in_day)
-  (in_day.day_sym? ? day_sym_pred(in_day) : day_num_pred(in_day))
+  if in_day.day_sym? then day_sym_pred(in_day)
+  elsif in_day.day_num? then day_num_pred(in_day)
+  else check_pre(false)
+  end
 end
 
 def to_internal(in_index)

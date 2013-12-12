@@ -69,11 +69,11 @@ class Point1d < Point
 		check_pre((in_point.point1d?))
 		Point1d[self.point + in_point.point]
 	end
-	
+
 	def same_tree?(in_obj)
 		in_obj.point1d? and in_obj.point == self.point
 	end
-	
+
 	def get_translation_to(in_obj)
 		(in_obj.point1d? ? in_obj.point - self.point : nil)
 	end
@@ -151,7 +151,7 @@ class Union1d < Shape1d
 	def invariant?() self.left.shape1d? and self.right.shape1d? end
 	def left() @left end
 	def right() @right end
-	
+
 	def include?(in_point)
 		self.left.include?(in_point) or self.right.include?(in_point)
 	end

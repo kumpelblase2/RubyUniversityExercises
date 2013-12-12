@@ -16,6 +16,7 @@ class GraphicsTest < Test::Unit::TestCase
 	
 	def test_shape2d
 		assert_equal(shape2d?(Range2d[Range1d[1,2], Range1d[1,2]]), true)
+    assert_equal(shape2d?(Union2d[Range2d[Range1d[1,2], Range1d[1,2]], Range2d[Range1d[1,2], Range1d[1,2]]]), true)
 	end
 	
 	def test_include
