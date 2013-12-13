@@ -24,6 +24,7 @@ class GraphicsTest < Test::Unit::TestCase
 	P22 = Point2d[P12, P12]
 	P23 = Point2d[P13, P13]
 	P24 = Point2d[P14, P14]
+	P25 = Point2d[P11, P13]
 	R21 = Range2d[R11, R12]
 	R22 = Range2d[R13, R14]
 	R23 = Range2d[R12, R14]
@@ -73,5 +74,30 @@ class GraphicsTest < Test::Unit::TestCase
 		assert_equal(true, U11 == U11)
 		assert_equal(false, U11 == R11)
 		assert_equal(true, U11 == Union1d[R11, R12])
+	end
+	
+	def test_add
+		assert_equal(Union1d[R11, R11], R11 + R11)
+		assert_equal(Union1d[Union1d[R11, R11], R11], (R11 + R11) + R11)
+		assert_equal(Point1d[2], P11 + P11)
+		assert_equal(Union2d[R21, R21], R21 + R21)
+		assert_not_equal(Union2d[R21, R22], R22 + R21)
+		assert_equal(P22, P21 + P21)
+	end
+	
+	def test_translate
+		assert_equal(P12, P11.translate(P11))
+		assert_equal(P11, P12.translate(Point1d[-1]))
+		assert_equal(R12, R11.translate(P12))
+		assert_equal(R11, R12.translate(Point1d[-2]))
+	end
+	
+	def test_include
+		assert_equal(true, P11.include?(P11))
+		assert_equal(true, P21.include?(P21))
+		assert_equal(true, R11.include?(P11))
+		assert_equal(true, R21.include?(P25))
+		assert_equal(true, U11.include?(P11))
+		assert_equal(false, R21.include?(P21))
 	end
 end
