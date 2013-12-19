@@ -26,6 +26,15 @@ def Day
   def self.[](*args) check_inv(self.new(*args)) end
   def day?() true end
   def to_representation(in_representation) (in_representation.day_num? ? self.to_day_num() : self.to_day_sym()) end
+  def +(in_amount)
+	  check_pre((in_amount.int?))
+	  self.shift(in_amount)
+  end
+  
+  def -(in_amount)
+	  check_pre((in_amount.int?))
+	  self.shift(-in_amount)
+  end
 end
 
 class DaySym
@@ -38,23 +47,15 @@ class DaySym
   def to_day_sym() self end
   def succ() self.shift(1) end
   def pred() self.shift(-1) end
-  def shift(in_shift) self.to_day_num().shift(in_shift).to_day_sym() end
+  def shift(in_shift)
+	self.to_day_num().shift(in_shift).to_day_sym()
+  end
   
-    
   def ==(in_obj)
-    in_obj.day_sym? and in_obj.sym == self.sym
+    self.equal?(in_obj) or (in_obj.day_sym? and in_obj.sym == self.sym)
   end
   
-  def +(in_shift)
-    self.shift(in_shift)
-  end
-  
-  def -(in_shift)
-    check_pre((in_shift.int?))
-    self.shift(-in_shift)
-  end
-  
-  def to_s() "DaySym[#{self.sym}]" end
+  def to_s() "DaySym[#{self.sym.to_s}]" end
 end
 
 class DayNum
@@ -73,19 +74,10 @@ class DayNum
   end
 
   def ==(in_obj)
-    in_obj.day_num? and in_obj.num == self.num
+	self.equal?(in_obj) or (in_obj.day_num? and in_obj.num == self.num)
   end
   
-  def +(in_shift)
-    self.shift(in_shift)
-  end
-  
-  def -(in_shift)
-    check_pre((in_shift.int?))
-    self.shift(-in_shift)
-  end
-  
-  def to_s() "DayNum[#{self.num}]" end
+  def to_s() "DayNum[#{self.num.to_s}]" end
 end
 
 def to_internal(in_index)
