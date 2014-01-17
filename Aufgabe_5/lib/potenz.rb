@@ -14,3 +14,7 @@ def potenz_(in_number, in_potenz)
 	end
 	acc
 end
+
+def potenz2(in_number, in_potenz)
+	in_number.reduce(1) { |i| i *= in_number  }
+end

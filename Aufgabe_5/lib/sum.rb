@@ -14,3 +14,7 @@ def sum_(in_number)
 	end
 	acc
 end
+
+def sum2(in_number)
+	in_number.reduce(0) { |acc, i|  acc += i}
+end
